@@ -282,19 +282,17 @@ export function ResumeTemplate1({
           </h2>
           {portfolio.map((item: Portfolio) => (
             <div key={item.id} className="mb-4">
-              <div className="flex justify-between items-baseline mb-2">
-                <h3 className="text-lg font-semibold">{item.title}</h3>
-                {item.link && (
-                  <a
-                    href={!item.link.startsWith('http') ? `https://${item.link}` : item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:text-blue-800"
-                  >
-                    🔗 {t("View Project", "Lihat Proyek")}
-                  </a>
-                )}
-              </div>
+              <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
+              {item.link && (
+                <a
+                  href={!item.link.startsWith('http') ? `https://${item.link}` : item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:text-blue-800 block mb-2"
+                >
+                  {item.link}
+                </a>
+              )}
               {item.imageUrl && (
                 <div className="mb-3">
                   <Image

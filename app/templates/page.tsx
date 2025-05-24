@@ -273,22 +273,21 @@ export default function TemplatesPage() {
             <span>CV Maker</span>
           </div>
           <div className="flex items-center gap-4">
-            <Button onClick={generatePDF} className="gap-2 bg-primary hover:bg-primary/90">
-              <Download className="h-4 w-4" />
-              Download PDF
-            </Button>
-            <Button
-              variant={lang === 'en' ? 'outline' : 'default'}
-              onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
-              className="gap-2"
-            >
-              {lang === 'en' ? '🇮🇩 Bahasa Indonesia' : '🇬e English'}
-            </Button>
+            {/* Download PDF and Language buttons removed from here */}
           </div>
         </div>
       </header>
 
       <main className="container py-8 px-4 md:px-10">
+        <div className="flex justify-end mb-4">
+            <Button
+              variant={lang === 'en' ? 'outline' : 'ghost'}
+              onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
+              className="gap-2"
+            >
+              {lang === 'en' ? '🇬🇧 English' : '🇮🇩 Bahasa Indonesia'}
+            </Button>
+        </div>
         <h1 className="text-3xl font-bold mb-8 text-center md:text-left">Create Your Resume</h1>
 
         {/* Template Selection */}
@@ -718,8 +717,8 @@ export default function TemplatesPage() {
                   {renderTemplate()}
                 </div>
               </div>
-              <div className="mt-4 flex justify-end">
-                <Button onClick={generatePDF} className="gap-2">
+              <div className="mt-4 flex justify-center">
+                <Button onClick={generatePDF} className="gap-2 bg-primary hover:bg-primary/90">
                   <Download className="h-4 w-4" />
                   Download PDF
                 </Button>
