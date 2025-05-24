@@ -183,7 +183,9 @@ export function ResumeTemplate1({
         <h2 className="text-xl font-bold border-b-2 border-gray-300 pb-1 mb-3">
           {t("Professional Summary", "Ringkasan Profesional")}
         </h2>
-        <p className="text-gray-700">{personalInfo.summary}</p>
+        <p className="text-gray-700 break-words overflow-hidden text-ellipsis max-h-32">
+          {personalInfo.summary}
+        </p>
       </div>
 
       {/* Experience */}
