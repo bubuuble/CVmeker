@@ -130,6 +130,34 @@ export default function SupportPage() {
                     </div>
                 </div>
 
+                {/* Privacy Notice - No Data Stored */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 sm:p-8">
+                        <div className="flex items-start gap-4">
+                            <div className="text-4xl flex-shrink-0">🔒</div>
+                            <div className="flex-1">
+                                <h3 className="text-xl font-bold text-green-900 mb-3">
+                                    {language === 'id' ? 'Privasi & Keamanan Data' : 'Privacy & Data Security'}
+                                </h3>
+                                <div className="space-y-2 text-green-800">
+                                    <p className="leading-relaxed">
+                                        <span className="font-semibold">
+                                            {language === 'id' 
+                                                ? '✓ Tidak ada data yang disimpan di server kami.' 
+                                                : '✓ No data is stored on our servers.'}
+                                        </span>
+                                    </p>
+                                    <p className="text-sm leading-relaxed">
+                                        {language === 'id'
+                                            ? 'Semua informasi CV Anda diproses langsung di browser Anda. Kami tidak menyimpan, mengumpulkan, atau mengirim data pribadi Anda ke server manapun. Data Anda tetap milik Anda, 100% privat dan aman.'
+                                            : 'All your CV information is processed directly in your browser. We do not store, collect, or send your personal data to any server. Your data remains yours, 100% private and secure.'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Closing Message - Different approach */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pb-24">
                     <div className="text-center max-w-2xl mx-auto">
