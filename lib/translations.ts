@@ -3,6 +3,8 @@ export const translations = {
     // Navbar
     home: "Home",
     templates: "Templates",
+    updates: "Updates",
+    updatesSubtitle: "See what's new in CV Maker",
     
     // Hero Section
     heroTitle: "Create Your Professional CV in Minutes",
@@ -54,6 +56,8 @@ export const translations = {
     imageSize: "Image:",
     downloadPDF: "Download PDF",
     generating: "Generating...",
+    clearData: "Clear All",
+    clearDataConfirm: "Are you sure you want to clear all CV data? This action cannot be undone.",
     
     // Form Sections
     resumeBuilder: "Resume Builder",
@@ -131,7 +135,7 @@ export const translations = {
     professionalExperience: "Professional Experience",
     organisationalExperience: "Organisational Experience",
     skillsAchievements: "Skills, Achievements & Other Experience",
-    educationCourses: "Education & Additional Courses",
+    educationCourses: "Education",
     workExperiences: "Work Experiences",
     volunteerExperience: "Volunteer Experience",
     languagesSkills: "Languages & Skills",
@@ -140,6 +144,8 @@ export const translations = {
     // Navbar
     home: "Beranda",
     templates: "Template",
+    updates: "Pembaruan",
+    updatesSubtitle: "Lihat apa yang baru di CV Maker",
     
     // Hero Section
     heroTitle: "Buat CV Profesional Anda dalam Hitungan Menit",
@@ -191,6 +197,8 @@ export const translations = {
     imageSize: "Gambar:",
     downloadPDF: "Unduh PDF",
     generating: "Membuat...",
+    clearData: "Hapus Semua",
+    clearDataConfirm: "Apakah Anda yakin ingin menghapus semua data CV? Tindakan ini tidak dapat dibatalkan.",
     
     // Form Sections
     resumeBuilder: "Pembuat Resume",
@@ -268,7 +276,7 @@ export const translations = {
     professionalExperience: "Pengalaman Profesional",
     organisationalExperience: "Pengalaman Organisasi",
     skillsAchievements: "Keterampilan, Pencapaian & Pengalaman Lainnya",
-    educationCourses: "Pendidikan & Kursus Tambahan",
+    educationCourses: "Pendidikan",
     workExperiences: "Pengalaman Kerja",
     volunteerExperience: "Pengalaman Volunteer",
     languagesSkills: "Bahasa & Keterampilan",

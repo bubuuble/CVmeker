@@ -22,6 +22,7 @@ const Navbar: React.FC = () => {
           <nav className="hidden md:flex items-center gap-8">
             <a className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" href="/">{t('home')}</a>
             <a className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" href="/templates">{t('templates')}</a>
+            <a className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" href="/updates">{t('updates')}</a>
             <a className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" href="/support">Support</a>
           </nav>
           
@@ -79,6 +80,13 @@ const Navbar: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t('templates')}
+              </a>
+              <a 
+                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2" 
+                href="/updates"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t('updates')}
               </a>
               <a 
                 className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2" 

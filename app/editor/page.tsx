@@ -13,6 +13,8 @@ import Template3 from '@/components/templates/template3';
 import { modernProfessionalData, classicATSData, joshuaPhuaData } from '@/lib/mock-data';
 import CvForm from '@/components/CvForm';
 
+const STORAGE_KEY = 'cvmaker_data';
+
 function EditorContent() {
   const { t } = useLanguage();
   const [cvData, setCvData] = useState<CVData | null>(null);
@@ -22,22 +24,135 @@ function EditorContent() {
   const [fontSize, setFontSize] = useState('11');
   const [highlightColor, setHighlightColor] = useState('#000000ff'); 
   const [imageSize, setImageSize] = useState('24');
+  const [isLoading, setIsLoading] = useState(true);
   const cvPreviewRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
 
+  // Load data from localStorage or template on mount
   useEffect(() => {
     const template = searchParams.get('template');
-    if (template === 'template1') {
-      setTemplateId('template1');
-      setCvData(JSON.parse(JSON.stringify(modernProfessionalData)));
-    } else if (template === 'template2') {
-      setTemplateId('template2');
-      setCvData(JSON.parse(JSON.stringify(classicATSData)));
-    } else if (template === 'template3') {
-      setTemplateId('template3');
-      setCvData(JSON.parse(JSON.stringify(joshuaPhuaData)));
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    
+    console.log('Loading editor with template:', template);
+    console.log('Saved data exists:', !!savedData);
+    
+    // Helper function to load template data
+    const loadTemplate = (templateName: string) => {
+      console.log('Loading fresh template:', templateName);
+      if (templateName === 'template1') {
+        setTemplateId('template1');
+        setCvData(JSON.parse(JSON.stringify(modernProfessionalData)));
+      } else if (templateName === 'template2') {
+        setTemplateId('template2');
+        setCvData(JSON.parse(JSON.stringify(classicATSData)));
+      } else if (templateName === 'template3') {
+        setTemplateId('template3');
+        setCvData(JSON.parse(JSON.stringify(joshuaPhuaData)));
+      }
+      setIsLoading(false);
+    };
+    
+    // If URL has template parameter, load that template
+    if (template) {
+      // Check if saved data matches the requested template
+      if (savedData) {
+        try {
+          const parsed = JSON.parse(savedData);
+          // Validate saved data has proper cvData object
+          if (parsed.templateId === template && parsed.cvData && parsed.cvData.personalInfo) {
+            console.log('Loading saved data for template:', template);
+            // Load saved data for this template
+            setCvData(parsed.cvData);
+            setTemplateId(parsed.templateId);
+            setFontFamily(parsed.fontFamily || 'Calibri');
+            setFontSize(parsed.fontSize || '11');
+            setHighlightColor(parsed.highlightColor || '#000000ff');
+            setImageSize(parsed.imageSize || '24');
+            setIsLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.error('Failed to parse saved CV data:', e);
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+      
+      // Load fresh template data
+      loadTemplate(template);
+    } else {
+      // No template in URL, try to load from localStorage
+      if (savedData) {
+        try {
+          const parsed = JSON.parse(savedData);
+          // Validate saved data has proper cvData object
+          if (parsed.cvData && parsed.cvData.personalInfo && parsed.templateId) {
+            console.log('Loading saved data from localStorage');
+            setCvData(parsed.cvData);
+            setTemplateId(parsed.templateId);
+            setFontFamily(parsed.fontFamily || 'Calibri');
+            setFontSize(parsed.fontSize || '11');
+            setHighlightColor(parsed.highlightColor || '#000000ff');
+            setImageSize(parsed.imageSize || '24');
+          }
+        } catch (e) {
+          console.error('Failed to parse saved CV data:', e);
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+      setIsLoading(false);
     }
   }, [searchParams]);
+
+  // Save data to localStorage whenever it changes
+  useEffect(() => {
+    if (cvData && templateId) {
+      const dataToSave = {
+        cvData,
+        templateId,
+        fontFamily,
+        fontSize,
+        highlightColor,
+        imageSize,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+    }
+  }, [cvData, templateId, fontFamily, fontSize, highlightColor, imageSize]);
+
+  // Empty CV data structure
+  const getEmptyCVData = (): CVData => ({
+    personalInfo: {
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      portfolio: '',
+      photoUrl: '',
+    },
+    summary: '',
+    education: [],
+    workExperience: [],
+    organizationalExperience: [],
+    achievements: [],
+    projects: [],
+    skills: [],
+    languages: [],
+  });
+
+  const handleClearData = () => {
+    if (window.confirm(t('clearDataConfirm'))) {
+      const emptyData = getEmptyCVData();
+      setCvData(emptyData);
+      // Keep templateId so the template layout remains visible
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        cvData: emptyData,
+        templateId,
+        fontFamily,
+        fontSize,
+        highlightColor,
+        imageSize,
+      }));
+    }
+  };
 
   const handleDownloadPDF = async () => {
     if (!cvData) return;
@@ -98,14 +213,22 @@ function EditorContent() {
               <div className="flex flex-col gap-3 p-3 sm:p-4 bg-card border rounded-lg">
                 <div className="flex items-center justify-between">
                   <h1 className="text-lg sm:text-xl font-bold">{t('liveEditor')}</h1>
-                  {/* Download Button - Mobile Top */}
-                  <button 
-                    onClick={handleDownloadPDF} 
-                    disabled={isLoadingPDF}
-                    className="lg:hidden h-9 px-3 text-xs sm:text-sm bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 disabled:bg-muted whitespace-nowrap"
-                  >
-                    {isLoadingPDF ? t('generating') : t('downloadPDF')}
-                  </button>
+                  {/* Buttons - Mobile Top */}
+                  <div className="flex gap-2 lg:hidden">
+                    <button 
+                      onClick={handleClearData}
+                      className="h-9 px-3 text-xs sm:text-sm bg-destructive text-destructive-foreground rounded font-medium hover:bg-destructive/90 whitespace-nowrap"
+                    >
+                      {t('clearData')}
+                    </button>
+                    <button 
+                      onClick={handleDownloadPDF} 
+                      disabled={isLoadingPDF}
+                      className="h-9 px-3 text-xs sm:text-sm bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 disabled:bg-muted whitespace-nowrap"
+                    >
+                      {isLoadingPDF ? t('generating') : t('downloadPDF')}
+                    </button>
+                  </div>
                 </div>
                 
                 {/* Customization Controls */}
@@ -175,14 +298,22 @@ function EditorContent() {
                     </select>
                   </div>
 
-                  {/* Download Button - Desktop */}
-                  <button 
-                    onClick={handleDownloadPDF} 
-                    disabled={isLoadingPDF}
-                    className="hidden lg:block h-8 px-4 text-sm bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 disabled:bg-muted whitespace-nowrap ml-auto"
-                  >
-                    {isLoadingPDF ? t('generating') : t('downloadPDF')}
-                  </button>
+                  {/* Buttons - Desktop */}
+                  <div className="hidden lg:flex gap-2 ml-auto">
+                    <button 
+                      onClick={handleClearData}
+                      className="h-8 px-4 text-sm bg-destructive text-destructive-foreground rounded font-medium hover:bg-destructive/90 whitespace-nowrap"
+                    >
+                      {t('clearData')}
+                    </button>
+                    <button 
+                      onClick={handleDownloadPDF} 
+                      disabled={isLoadingPDF}
+                      className="h-8 px-4 text-sm bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 disabled:bg-muted whitespace-nowrap"
+                    >
+                      {isLoadingPDF ? t('generating') : t('downloadPDF')}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

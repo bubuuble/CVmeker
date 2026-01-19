@@ -327,7 +327,7 @@ function generateTemplate2HTML(data: CVData, fontFamily: string, fontSize: strin
 
           ${data.education.length > 0 ? `
             <div class="section">
-              <div class="section-title">Education & Additional Courses</div>
+              <div class="section-title">Education</div>
               <div class="section-content">
                 ${data.education.map(edu => `
                   <div class="section-item">
