@@ -121,41 +121,38 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
   ];
 
   return (
-    <div className="relative h-full flex flex-col" style={{ 
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif'
-    }}>
+    <div className="relative h-full flex flex-col">
       {/* Header */}
-      <div className="border-b border-stone-300 px-6 py-4">
-        <h2 className="text-xl font-light tracking-wide text-stone-800" style={{ letterSpacing: '0.05em' }}>
+      <div className="border-b px-5 sm:px-6 py-5">
+        <h2 className="text-lg font-extrabold tracking-tight text-foreground">
           {t('resumeBuilder')}
         </h2>
-        <h1 className="text-l font-light tracking-wide text-stone-800" style={{ letterSpacing: '0.05em' }}>
+        <h1 className="mt-0.5 text-sm font-normal text-muted-foreground">
           {t('deleteOrLeave')}
         </h1>
       </div>
 
       {/* Horizontal Navigation Bar */}
-      <div className="border-b border-stone-200 bg-stone-50/50">
-        <div className="flex overflow-x-auto" style={{ 
+      <div className="border-b bg-secondary/50 px-2 sm:px-3">
+        <div className="flex gap-1 overflow-x-auto py-2" style={{ 
           scrollbarWidth: 'thin',
-          scrollbarColor: '#3b82f6 transparent'
+          scrollbarColor: 'hsl(var(--border)) transparent'
         }}>
           {sections.map(section => (
             <button
               key={section.key}
               onClick={() => setActiveSection(section.key)}
               className={`
-                relative px-6 py-3 text-sm uppercase tracking-wider whitespace-nowrap transition-all duration-300
+                relative px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200
                 ${activeSection === section.key 
-                  ? 'text-blue-700 bg-white' 
-                  : 'text-stone-600 hover:text-stone-800 hover:bg-stone-100/50'
+                  ? 'text-primary bg-card shadow-sm ring-1 ring-border' 
+                  : 'text-muted-foreground hover:text-foreground hover:bg-card/70'
                 }
               `}
-              style={{ letterSpacing: '0.1em' }}
             >
               {section.label}
               {activeSection === section.key && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700" />
+                <div className="hidden" />
               )}
             </button>
           ))}
@@ -163,9 +160,9 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
       </div>
 
       {/* Content Area with Smooth Transitions */}
-      <div className="flex-1 overflow-y-auto p-6" style={{ 
+      <div className="flex-1 overflow-y-auto p-5 sm:p-6" style={{ 
         scrollbarWidth: 'thin',
-        scrollbarColor: '#3b82f6 transparent'
+        scrollbarColor: 'hsl(var(--border)) transparent'
       }}>
         <div className="max-w-4xl mx-auto">
           
@@ -174,13 +171,13 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
             <div className="space-y-6">
               {/* Image Upload */}
               <div>
-                <label className="block text-xs uppercase tracking-widest text-stone-600 mb-3" style={{ letterSpacing: '0.12em' }}>{t('profilePhoto')}</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-2">{t('profilePhoto')}</label>
                 {data.personalInfo.photoUrl ? (
                   <div className="relative inline-block">
-                    <img src={data.personalInfo.photoUrl} alt="Profile" className="w-32 h-32 object-cover border-2 border-stone-300" />
+                    <img src={data.personalInfo.photoUrl} alt="Profile" className="w-28 h-28 object-cover rounded-2xl border shadow-sm" />
                     <button
                       onClick={removeImage}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-600 text-white text-sm hover:bg-red-700 transition-colors flex items-center justify-center"
+                      className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-red-600 text-white text-sm shadow hover:bg-red-700 transition-colors flex items-center justify-center"
                     >
                       ×
                     </button>
@@ -190,61 +187,71 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="block w-full text-sm text-stone-600 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:uppercase file:tracking-widest file:bg-stone-800 file:text-white hover:file:bg-blue-700 file:transition-colors"
+                    className="block w-full text-sm text-muted-foreground file:mr-4 file:h-10 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/15 file:transition-colors file:cursor-pointer"
                   />
                 )}
               </div>
               
               <div>
-                <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>{t('name')}</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1.5">{t('name')}</label>
                 <input 
                   type="text" 
-                  name="name" 
-                  value={data.personalInfo.name || ''} 
-                  onChange={handlePersonalInfoChange} 
-                  className="w-full px-0 py-2 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800 transition-colors"
+                  name="name"
+                  value={data.personalInfo.name || ''}
+                  onChange={handlePersonalInfoChange}
+                  className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1.5">{t('jobTitle')}</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={data.personalInfo.title || ''}
+                  onChange={handlePersonalInfoChange}
+                  className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>{t('email')}</label>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5">{t('email')}</label>
                   <input 
                     type="email" 
                     name="email" 
                     value={data.personalInfo.email || ''} 
                     onChange={handlePersonalInfoChange} 
-                    className="w-full px-0 py-2 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800 transition-colors"
+                    className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>{t('phone')}</label>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5">{t('phone')}</label>
                   <input 
                     type="tel" 
                     name="phone" 
                     value={data.personalInfo.phone || ''} 
                     onChange={handlePersonalInfoChange} 
-                    className="w-full px-0 py-2 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800 transition-colors"
+                    className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>{t('address')}</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1.5">{t('address')}</label>
                 <input 
                   type="text" 
                   name="address" 
                   value={data.personalInfo.address || ''} 
                   onChange={handlePersonalInfoChange} 
-                  className="w-full px-0 py-2 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800 transition-colors"
+                  className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                 />
               </div>
               <div>
-                <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>{t('portfolio')}</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1.5">{t('portfolio')}</label>
                 <input 
                   type="text" 
                   name="portfolio" 
                   value={data.personalInfo.portfolio || ''} 
                   onChange={handlePersonalInfoChange} 
-                  className="w-full px-0 py-2 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800 transition-colors"
+                  className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                 />
               </div>
             </div>
@@ -253,13 +260,13 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
           {/* Summary */}
           <div className={`transition-all duration-500 ${activeSection === 'summary' ? 'opacity-100 translate-y-0 block' : 'hidden opacity-0 translate-y-4'}`}>
             <div className="space-y-3">
-              <label className="block text-xs uppercase tracking-widest text-stone-600" style={{ letterSpacing: '0.12em' }}>{t('professionalSummary')}</label>
+              <label className="block text-xs font-semibold text-muted-foreground">{t('professionalSummary')}</label>
               <textarea 
                 rows={8} 
                 value={data.summary || ''} 
                 onChange={handleSummaryChange} 
                 placeholder="Describe your professional background, key achievements, and career objectives..."
-                className="w-full px-4 py-3 bg-stone-50 border border-stone-200 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600/20 text-stone-800 leading-relaxed transition-all"
+                className="w-full px-3 py-2.5 rounded-lg border border-input bg-background text-sm text-foreground leading-relaxed placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
               />
             </div>
           </div>
@@ -268,54 +275,54 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
           <div className={`transition-all duration-500 ${activeSection === 'education' ? 'opacity-100 translate-y-0 block' : 'hidden opacity-0 translate-y-4'}`}>
             <div className="space-y-6">
               {data.education.map((edu, index) => (
-                <div key={index} className="relative bg-stone-50/50 border-l-2 border-blue-600 pl-5 pr-4 py-4">
+                <div key={index} className="relative rounded-xl border bg-secondary/40 p-4 pr-12 sm:p-5 sm:pr-12">
                   <button 
                     onClick={() => removeEntry('education', index)} 
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-stone-800 text-white text-sm hover:bg-red-600 transition-colors flex items-center justify-center"
+                    className="absolute top-3 right-3 w-7 h-7 rounded-full border bg-card text-muted-foreground text-base leading-none hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors flex items-center justify-center"
                   >
                     ×
                   </button>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Institution</label>
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Institution</label>
                       <input 
                         type="text" 
                         name="institution" 
                         value={edu.institution || ''} 
                         onChange={(e) => handleSimpleArrayChange('education', index, e)} 
-                        className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                        className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Degree</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Degree</label>
                         <input 
                           type="text" 
                           name="degree" 
                           value={edu.degree || ''} 
                           onChange={(e) => handleSimpleArrayChange('education', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Date Range</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Date Range</label>
                         <input 
                           type="text" 
                           name="dateRange" 
                           value={edu.dateRange || ''} 
                           onChange={(e) => handleSimpleArrayChange('education', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>GPA (Optional)</label>
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">GPA (Optional)</label>
                       <input 
                         type="text" 
                         name="gpa" 
                         value={edu.gpa || ''} 
                         onChange={(e) => handleSimpleArrayChange('education', index, e)} 
-                        className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                        className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                   </div>
@@ -323,8 +330,7 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
               ))}
               <button 
                 onClick={() => addEntry('education')} 
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs uppercase tracking-widest bg-stone-800 text-white hover:bg-blue-700 transition-colors"
-                style={{ letterSpacing: '0.15em' }}
+                className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-dashed border-primary/40 bg-primary/5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
               >
                 <span>+</span> Add Education
               </button>
@@ -335,54 +341,54 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
           <div className={`transition-all duration-500 ${activeSection === 'work' ? 'opacity-100 translate-y-0 block' : 'hidden opacity-0 translate-y-4'}`}>
             <div className="space-y-6">
               {(data.workExperience as ExperienceEntry[]).map((entry, index) => (
-                <div key={index} className="relative bg-stone-50/50 border-l-2 border-blue-600 pl-5 pr-4 py-4">
+                <div key={index} className="relative rounded-xl border bg-secondary/40 p-4 pr-12 sm:p-5 sm:pr-12">
                   <button 
                     onClick={() => removeEntry('workExperience', index)} 
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-stone-800 text-white text-sm hover:bg-red-600 transition-colors flex items-center justify-center"
+                    className="absolute top-3 right-3 w-7 h-7 rounded-full border bg-card text-muted-foreground text-base leading-none hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors flex items-center justify-center"
                   >
                     ×
                   </button>
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Role / Position</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Role / Position</label>
                         <input 
                           type="text" 
                           name="role" 
                           value={entry.role || ''} 
                           onChange={(e) => handleSimpleArrayChange('workExperience', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Date Range</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Date Range</label>
                         <input 
                           type="text" 
                           name="dateRange" 
                           value={entry.dateRange || ''} 
                           onChange={(e) => handleSimpleArrayChange('workExperience', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Company / Organization</label>
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Company / Organization</label>
                       <input 
                         type="text" 
                         name="company" 
                         value={entry.company || ''} 
                         onChange={(e) => handleSimpleArrayChange('workExperience', index, e)} 
-                        className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                        className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Responsibilities</label>
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Responsibilities</label>
                       <textarea 
                         rows={4} 
                         value={entry.responsibilities.join('\n')} 
                         onChange={(e) => handleListChange('workExperience', index, e.target.value)} 
                         placeholder="One responsibility per line..."
-                        className="w-full px-4 py-3 bg-white border border-stone-200 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600/20 text-stone-800 text-sm leading-relaxed"
+                        className="w-full px-3 py-2.5 rounded-lg border border-input bg-background text-sm text-foreground leading-relaxed placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                   </div>
@@ -390,8 +396,7 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
               ))}
               <button 
                 onClick={() => addEntry('workExperience')} 
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs uppercase tracking-widest bg-stone-800 text-white hover:bg-blue-700 transition-colors"
-                style={{ letterSpacing: '0.15em' }}
+                className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-dashed border-primary/40 bg-primary/5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
               >
                 <span>+</span> Add Work Experience
               </button>
@@ -402,54 +407,54 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
           <div className={`transition-all duration-500 ${activeSection === 'organization' ? 'opacity-100 translate-y-0 block' : 'hidden opacity-0 translate-y-4'}`}>
             <div className="space-y-6">
               {(data.organizationalExperience as ExperienceEntry[]).map((entry, index) => (
-                <div key={index} className="relative bg-stone-50/50 border-l-2 border-blue-600 pl-5 pr-4 py-4">
+                <div key={index} className="relative rounded-xl border bg-secondary/40 p-4 pr-12 sm:p-5 sm:pr-12">
                   <button 
                     onClick={() => removeEntry('organizationalExperience', index)} 
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-stone-800 text-white text-sm hover:bg-red-600 transition-colors flex items-center justify-center"
+                    className="absolute top-3 right-3 w-7 h-7 rounded-full border bg-card text-muted-foreground text-base leading-none hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors flex items-center justify-center"
                   >
                     ×
                   </button>
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Role / Position</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Role / Position</label>
                         <input 
                           type="text" 
                           name="role" 
                           value={entry.role || ''} 
                           onChange={(e) => handleSimpleArrayChange('organizationalExperience', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Date Range</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Date Range</label>
                         <input 
                           type="text" 
                           name="dateRange" 
                           value={entry.dateRange || ''} 
                           onChange={(e) => handleSimpleArrayChange('organizationalExperience', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Organization</label>
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Organization</label>
                       <input 
                         type="text" 
                         name="company" 
                         value={entry.company || ''} 
                         onChange={(e) => handleSimpleArrayChange('organizationalExperience', index, e)} 
-                        className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                        className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Responsibilities</label>
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Responsibilities</label>
                       <textarea 
                         rows={4} 
                         value={entry.responsibilities.join('\n')} 
                         onChange={(e) => handleListChange('organizationalExperience', index, e.target.value)} 
                         placeholder="One responsibility per line..."
-                        className="w-full px-4 py-3 bg-white border border-stone-200 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600/20 text-stone-800 text-sm leading-relaxed"
+                        className="w-full px-3 py-2.5 rounded-lg border border-input bg-background text-sm text-foreground leading-relaxed placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                   </div>
@@ -457,8 +462,7 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
               ))}
               <button 
                 onClick={() => addEntry('organizationalExperience')} 
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs uppercase tracking-widest bg-stone-800 text-white hover:bg-blue-700 transition-colors"
-                style={{ letterSpacing: '0.15em' }}
+                className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-dashed border-primary/40 bg-primary/5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
               >
                 <span>+</span> Add Organization
               </button>
@@ -469,54 +473,54 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
           <div className={`transition-all duration-500 ${activeSection === 'achievements' ? 'opacity-100 translate-y-0 block' : 'hidden opacity-0 translate-y-4'}`}>
             <div className="space-y-6">
               {(data.achievements as ExperienceEntry[]).map((entry, index) => (
-                <div key={index} className="relative bg-stone-50/50 border-l-2 border-blue-600 pl-5 pr-4 py-4">
+                <div key={index} className="relative rounded-xl border bg-secondary/40 p-4 pr-12 sm:p-5 sm:pr-12">
                   <button 
                     onClick={() => removeEntry('achievements', index)} 
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-stone-800 text-white text-sm hover:bg-red-600 transition-colors flex items-center justify-center"
+                    className="absolute top-3 right-3 w-7 h-7 rounded-full border bg-card text-muted-foreground text-base leading-none hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors flex items-center justify-center"
                   >
                     ×
                   </button>
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Title</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Title</label>
                         <input 
                           type="text" 
                           name="role" 
                           value={entry.role || ''} 
                           onChange={(e) => handleSimpleArrayChange('achievements', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Date</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Date</label>
                         <input 
                           type="text" 
                           name="dateRange" 
                           value={entry.dateRange || ''} 
                           onChange={(e) => handleSimpleArrayChange('achievements', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Issuer / Organization</label>
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Issuer / Organization</label>
                       <input 
                         type="text" 
                         name="company" 
                         value={entry.company || ''} 
                         onChange={(e) => handleSimpleArrayChange('achievements', index, e)} 
-                        className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                        className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Details</label>
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Details</label>
                       <textarea 
                         rows={3} 
                         value={entry.responsibilities.join('\n')} 
                         onChange={(e) => handleListChange('achievements', index, e.target.value)} 
                         placeholder="One detail per line..."
-                        className="w-full px-4 py-3 bg-white border border-stone-200 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600/20 text-stone-800 text-sm leading-relaxed"
+                        className="w-full px-3 py-2.5 rounded-lg border border-input bg-background text-sm text-foreground leading-relaxed placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                   </div>
@@ -524,8 +528,7 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
               ))}
               <button 
                 onClick={() => addEntry('achievements')} 
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs uppercase tracking-widest bg-stone-800 text-white hover:bg-blue-700 transition-colors"
-                style={{ letterSpacing: '0.15em' }}
+                className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-dashed border-primary/40 bg-primary/5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
               >
                 <span>+</span> Add Achievement
               </button>
@@ -536,44 +539,44 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
           <div className={`transition-all duration-500 ${activeSection === 'projects' ? 'opacity-100 translate-y-0 block' : 'hidden opacity-0 translate-y-4'}`}>
             <div className="space-y-6">
               {(data.projects as ProjectEntry[]).map((entry, index) => (
-                <div key={index} className="relative bg-stone-50/50 border-l-2 border-blue-600 pl-5 pr-4 py-4">
+                <div key={index} className="relative rounded-xl border bg-secondary/40 p-4 pr-12 sm:p-5 sm:pr-12">
                   <button 
                     onClick={() => removeEntry('projects', index)} 
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-stone-800 text-white text-sm hover:bg-red-600 transition-colors flex items-center justify-center"
+                    className="absolute top-3 right-3 w-7 h-7 rounded-full border bg-card text-muted-foreground text-base leading-none hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors flex items-center justify-center"
                   >
                     ×
                   </button>
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Project Name</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Project Name</label>
                         <input 
                           type="text" 
                           name="name" 
                           value={entry.name || ''} 
                           onChange={(e) => handleSimpleArrayChange('projects', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Date</label>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Date</label>
                         <input 
                           type="text" 
                           name="date" 
                           value={entry.date || ''} 
                           onChange={(e) => handleSimpleArrayChange('projects', index, e)} 
-                          className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                          className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs uppercase tracking-widest text-stone-600 mb-2" style={{ letterSpacing: '0.12em' }}>Project Details</label>
+                      <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Project Details</label>
                       <textarea 
                         rows={4} 
                         value={entry.details.join('\n')} 
                         onChange={(e) => handleListChange('projects', index, e.target.value)} 
                         placeholder="One detail per line..."
-                        className="w-full px-4 py-3 bg-white border border-stone-200 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600/20 text-stone-800 text-sm leading-relaxed"
+                        className="w-full px-3 py-2.5 rounded-lg border border-input bg-background text-sm text-foreground leading-relaxed placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                   </div>
@@ -581,8 +584,7 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
               ))}
               <button 
                 onClick={() => addEntry('projects')} 
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs uppercase tracking-widest bg-stone-800 text-white hover:bg-blue-700 transition-colors"
-                style={{ letterSpacing: '0.15em' }}
+                className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-dashed border-primary/40 bg-primary/5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
               >
                 <span>+</span> Add Project
               </button>
@@ -594,13 +596,13 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
             <div className="space-y-8">
               {/* Skills */}
               <div>
-                <h4 className="text-base font-light tracking-wide text-stone-700 uppercase mb-4" style={{ letterSpacing: '0.08em' }}>Skills</h4>
+                <h4 className="text-sm font-bold text-foreground mb-3">Skills</h4>
                 <div className="space-y-3">
                   {(data.skills as string[]).map((skill, index) => (
-                    <div key={index} className="relative bg-stone-50/50 border-l-2 border-blue-600 pl-5 pr-4 py-3">
+                    <div key={index} className="relative rounded-xl border bg-secondary/40 p-4 pr-12">
                       <button 
                         onClick={() => removeSkillLanguage('skills', index)} 
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-stone-800 text-white text-sm hover:bg-red-600 transition-colors flex items-center justify-center"
+                        className="absolute top-3 right-3 w-7 h-7 rounded-full border bg-card text-muted-foreground text-base leading-none hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors flex items-center justify-center"
                       >
                         ×
                       </button>
@@ -609,14 +611,13 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
                         value={skill} 
                         onChange={(e) => handleSkillLanguageChange('skills', index, e.target.value)} 
                         placeholder="e.g. JavaScript, React, Python..."
-                        className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                        className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                   ))}
                   <button 
                     onClick={() => addSkillLanguage('skills')} 
-                    className="inline-flex items-center gap-2 px-5 py-2 text-xs uppercase tracking-widest bg-stone-800 text-white hover:bg-blue-700 transition-colors"
-                    style={{ letterSpacing: '0.15em' }}
+                    className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-dashed border-primary/40 bg-primary/5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
                   >
                     <span>+</span> Add Skill
                   </button>
@@ -625,13 +626,13 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
 
               {/* Languages */}
               <div>
-                <h4 className="text-base font-light tracking-wide text-stone-700 uppercase mb-4" style={{ letterSpacing: '0.08em' }}>Languages</h4>
+                <h4 className="text-sm font-bold text-foreground mb-3">Languages</h4>
                 <div className="space-y-3">
                   {(data.languages as string[]).map((language, index) => (
-                    <div key={index} className="relative bg-stone-50/50 border-l-2 border-blue-600 pl-5 pr-4 py-3">
+                    <div key={index} className="relative rounded-xl border bg-secondary/40 p-4 pr-12">
                       <button 
                         onClick={() => removeSkillLanguage('languages', index)} 
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-stone-800 text-white text-sm hover:bg-red-600 transition-colors flex items-center justify-center"
+                        className="absolute top-3 right-3 w-7 h-7 rounded-full border bg-card text-muted-foreground text-base leading-none hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors flex items-center justify-center"
                       >
                         ×
                       </button>
@@ -640,14 +641,13 @@ const CvForm: React.FC<CvFormProps> = ({ data, setData }) => {
                         value={language} 
                         onChange={(e) => handleSkillLanguageChange('languages', index, e.target.value)} 
                         placeholder="e.g. English, Spanish, French..."
-                        className="w-full px-0 py-1 bg-transparent border-0 border-b border-stone-300 focus:border-blue-700 focus:outline-none text-stone-800"
+                        className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
                       />
                     </div>
                   ))}
                   <button 
                     onClick={() => addSkillLanguage('languages')} 
-                    className="inline-flex items-center gap-2 px-5 py-2 text-xs uppercase tracking-widest bg-stone-800 text-white hover:bg-blue-700 transition-colors"
-                    style={{ letterSpacing: '0.15em' }}
+                    className="inline-flex items-center gap-2 h-10 px-4 rounded-lg border border-dashed border-primary/40 bg-primary/5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
                   >
                     <span>+</span> Add Language
                   </button>

@@ -10,10 +10,14 @@ export const translations = {
     heroTitle: "Create Your Professional CV in Minutes",
     heroSubtitle: "Build a standout resume with our easy-to-use CV maker. Choose from professional templates and customize to match your style.",
     getStarted: "Get Started",
+    heroImportCta: "Import Existing CV",
     browseTemplates: "Browse Templates",
     
     // Features
+    featuresEyebrow: "Features",
     featuresTitle: "Why Choose Our CV Maker?",
+    feature4Title: "Import Your Existing CV",
+    feature4Desc: "Upload a PDF or photo of your current CV and AI fills in the editor for you in seconds.",
     feature1Title: "Professional Templates",
     feature1Desc: "Choose from a variety of professionally designed templates that stand out.",
     feature2Title: "Easy Customization",
@@ -23,6 +27,7 @@ export const translations = {
     
     // How It Works
     howItWorksTitle: "How It Works",
+    howItWorksSubtitle: "From blank page to job-ready CV in three steps",
     step1Title: "Choose Template",
     step1Desc: "Select from our collection of professional CV templates.",
     step2Title: "Fill Information",
@@ -44,7 +49,29 @@ export const translations = {
     modernProfessional: "Modern Professional",
     classicATS: "Classic ATS",
     professionalResume: "Professional Resume",
-    
+
+    // CV Import
+    importCvBadge: "AI-powered import",
+    importCvTitle: "Already have a CV?",
+    importCvDesc: "Upload your existing CV and we'll fill in the editor for you. You can edit everything afterwards.",
+    importCvButton: "Upload CV",
+    importCvDrop: "or drag & drop your file here",
+    importCvFormats: "PDF, JPG, PNG or WEBP · max 4 MB",
+    importCvParsing: "Reading your CV...",
+    importCvFidelityNote: "The result is recreated to look as close as possible to your CV's design, but it won't be 100% identical. You can adjust everything in the editor.",    importLogTitle: "Progress",
+    importLogUploading: "Uploading your CV...",
+    importLogTrying: "AI is reading your CV...",
+    importLogRetrying: "Reading your CV with another model...",
+    importLogFallback: "This model is not available right now, switching to another model...",
+    importLogFallbackLast: "This model is not available right now.",
+    importLogDone: "Your CV has been read successfully.",
+    importLogRedirect: "Opening the editor with your CV design...",
+    photoPlaceholderHint: "Upload your photo in the Personal tab",    importCvPrivacy: "Your file is processed by Google Gemini to read its content and is not stored by CV Maker.",    importErrorFileType: "Unsupported file. Please upload a PDF, JPG, PNG or WEBP file.",
+    importErrorFileSize: "The file is too large. Maximum size is 4 MB.",
+    importErrorNotCv: "This file doesn't look like a CV. Please upload a different file.",
+    importErrorFailed: "We couldn't read your CV. Please try again or use a different file.",
+    importErrorNotConfigured: "CV import is not available right now.",
+
     // Editor Page
     editor: "Editor",
     liveEditor: "Live Editor",
@@ -73,6 +100,7 @@ export const translations = {
     
     // Personal Info Form
     name: "Name",
+    jobTitle: "Job Title / Headline",
     phone: "Phone",
     email: "Email",
     address: "Address",
@@ -151,10 +179,14 @@ export const translations = {
     heroTitle: "Buat CV Profesional Anda dalam Hitungan Menit",
     heroSubtitle: "Bangun resume yang menonjol dengan pembuat CV kami yang mudah digunakan. Pilih dari template profesional dan sesuaikan dengan gaya Anda.",
     getStarted: "Mulai Sekarang",
+    heroImportCta: "Import CV yang Ada",
     browseTemplates: "Lihat Template",
     
     // Features
+    featuresEyebrow: "Fitur",
     featuresTitle: "Mengapa Memilih Pembuat CV Kami?",
+    feature4Title: "Import CV yang Sudah Ada",
+    feature4Desc: "Upload PDF atau foto CV Anda dan AI akan mengisi editor untuk Anda dalam hitungan detik.",
     feature1Title: "Template Profesional",
     feature1Desc: "Pilih dari berbagai template yang dirancang secara profesional dan menonjol.",
     feature2Title: "Kustomisasi Mudah",
@@ -164,6 +196,7 @@ export const translations = {
     
     // How It Works
     howItWorksTitle: "Cara Kerja",
+    howItWorksSubtitle: "Dari halaman kosong ke CV siap kirim dalam tiga langkah",
     step1Title: "Pilih Template",
     step1Desc: "Pilih dari koleksi template CV profesional kami.",
     step2Title: "Isi Informasi",
@@ -185,7 +218,29 @@ export const translations = {
     modernProfessional: "Modern Profesional",
     classicATS: "Klasik ATS",
     professionalResume: "Resume Profesional",
-    
+
+    // CV Import
+    importCvBadge: "Import dengan AI",
+    importCvTitle: "Sudah punya CV?",
+    importCvDesc: "Upload CV Anda yang sudah ada dan kami akan mengisi editor untuk Anda. Semuanya tetap bisa diedit setelahnya.",
+    importCvButton: "Upload CV",
+    importCvDrop: "atau tarik & lepas file Anda di sini",
+    importCvFormats: "PDF, JPG, PNG atau WEBP · maks 4 MB",
+    importCvParsing: "Membaca CV Anda...",
+    importCvFidelityNote: "Hasilnya dibuat semirip mungkin dengan desain CV Anda, tetapi tidak akan 100% identik. Semuanya tetap bisa Anda sesuaikan di editor.",    importLogTitle: "Progres",
+    importLogUploading: "Mengupload CV Anda...",
+    importLogTrying: "AI sedang membaca CV Anda...",
+    importLogRetrying: "Membaca CV Anda dengan model lain...",
+    importLogFallback: "Model ini sedang tidak tersedia, pindah ke model lain...",
+    importLogFallbackLast: "Model ini sedang tidak tersedia.",
+    importLogDone: "CV Anda berhasil dibaca.",
+    importLogRedirect: "Membuka editor dengan desain CV Anda...",
+    photoPlaceholderHint: "Upload foto Anda di tab Personal",    importCvPrivacy: "File Anda diproses oleh Google Gemini untuk membaca isinya dan tidak disimpan oleh CV Maker.",    importErrorFileType: "File tidak didukung. Silakan upload file PDF, JPG, PNG atau WEBP.",
+    importErrorFileSize: "Ukuran file terlalu besar. Maksimal 4 MB.",
+    importErrorNotCv: "File ini sepertinya bukan CV. Silakan upload file lain.",
+    importErrorFailed: "Kami tidak dapat membaca CV Anda. Silakan coba lagi atau gunakan file lain.",
+    importErrorNotConfigured: "Fitur import CV sedang tidak tersedia.",
+
     // Editor Page
     editor: "Editor",
     liveEditor: "Editor Langsung",
@@ -214,6 +269,7 @@ export const translations = {
     
     // Personal Info Form
     name: "Nama",
+    jobTitle: "Jabatan / Headline",
     phone: "Telepon",
     email: "Email",
     address: "Alamat",

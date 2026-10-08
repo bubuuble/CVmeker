@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface UpdateItem {
@@ -14,6 +15,28 @@ interface UpdateItem {
 }
 
 const updates: UpdateItem[] = [
+  {
+    version: '1.2',
+    date: '2026-10-08',
+    changes: {
+      en: [
+        'Import your existing CV! Upload a PDF or photo of your CV and AI recreates it in the editor',
+        'Imported CVs keep their own look: layout, columns, colors, fonts and section titles follow your original CV (close, but not 100% identical)',
+        'See every step while your CV is being read, with automatic switching to another AI model when one is busy',
+        'New "Job Title / Headline" field under your name',
+        'Fresh new look: a cleaner, modern and mobile-friendly design across all pages',
+        'Clearer privacy notice explaining exactly what is sent where',
+      ],
+      id: [
+        'Import CV yang sudah ada! Upload PDF atau foto CV Anda dan AI akan membuatnya ulang di editor',
+        'CV hasil import mempertahankan tampilannya: layout, kolom, warna, font, dan judul section mengikuti CV asli (mirip, tapi tidak 100% identik)',
+        'Lihat setiap langkah saat CV sedang dibaca, dengan perpindahan otomatis ke model AI lain jika satu model sedang sibuk',
+        'Field baru "Jabatan / Headline" di bawah nama',
+        'Tampilan baru: desain yang lebih bersih, modern, dan nyaman di HP untuk semua halaman',
+        'Pemberitahuan privasi yang lebih jelas tentang data apa yang dikirim ke mana',
+      ],
+    },
+  },
   {
     version: '1.1',
     date: '2026-01-19',
@@ -62,54 +85,61 @@ const UpdatesPage: React.FC = () => {
   const { language, t } = useLanguage();
 
   return (
-    <div className="flex flex-col min-h-screen bg-secondary">
+    <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
-      <main className="flex-grow w-full px-4 py-8 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+      <main className="relative flex-grow w-full overflow-hidden px-4 py-14 sm:py-20 sm:px-6 lg:px-8">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[360px] bg-grid" />
+        <div className="relative max-w-3xl mx-auto">
+          <div className="text-center mb-14">
+            <span className="eyebrow">Changelog</span>
+            <h1 className="mt-4 text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">
               {t('updates')}
             </h1>
-            <p className="text-muted-foreground text-lg">
+            <p className="mt-4 text-muted-foreground text-base sm:text-lg">
               {t('updatesSubtitle')}
             </p>
           </div>
 
-          <div className="space-y-8">
+          <ol className="relative space-y-8 border-l-2 border-dashed border-border pl-6 sm:pl-8 ml-2">
             {updates.map((update, index) => (
-              <div
-                key={update.version}
-                className="bg-card border rounded-lg p-6 shadow-sm"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-semibold">
-                    v{update.version}
-                  </span>
-                  <span className="text-muted-foreground text-sm">
-                    {update.date}
-                  </span>
-                  {index === 0 && (
-                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
-                      {language === 'en' ? 'Latest' : 'Terbaru'}
+              <li key={update.version} className="relative">
+                <span
+                  className={`absolute -left-[33px] sm:-left-[41px] top-6 flex h-4 w-4 items-center justify-center rounded-full border-4 border-background ${
+                    index === 0 ? 'bg-primary ring-4 ring-primary/15' : 'bg-slate-300'
+                  }`}
+                />
+                <div className="bg-card border rounded-2xl p-6 sm:p-7 shadow-sm transition-shadow hover:shadow-md">
+                  <div className="flex flex-wrap items-center gap-3 mb-5">
+                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold">
+                      v{update.version}
                     </span>
-                  )}
+                    <span className="text-muted-foreground text-sm tabular-nums">
+                      {update.date}
+                    </span>
+                    {index === 0 && (
+                      <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-700 rounded-full text-xs font-semibold">
+                        {language === 'en' ? 'Latest' : 'Terbaru'}
+                      </span>
+                    )}
+                  </div>
+                  <ul className="space-y-3">
+                    {update.changes[language].map((change, changeIndex) => (
+                      <li
+                        key={changeIndex}
+                        className="flex items-start gap-3 text-foreground/90 leading-relaxed"
+                      >
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                        <span>{change}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-2">
-                  {update.changes[language].map((change, changeIndex) => (
-                    <li
-                      key={changeIndex}
-                      className="flex items-start gap-2 text-foreground"
-                    >
-                      <span className="text-primary mt-1">•</span>
-                      <span>{change}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

@@ -26,6 +26,7 @@ export interface ProjectEntry {
 export interface CVData {
   personalInfo: {
     name: string;
+    title?: string;
     phone: string;
     email: string;
     address: string;

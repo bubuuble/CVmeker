@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 import { CVData } from '@/types/types';
+import { CvDesign, googleFontsHref, normalizeDesign } from '@/lib/cv-design';
+import { CustomRenderOptions, customCvFonts, customCvPageBackground, renderCustomCv } from '@/lib/custom-template';
 
 interface PDFRequest {
   cvData: CVData;
@@ -10,14 +12,18 @@ interface PDFRequest {
   fontSize?: string;
   highlightColor?: string;
   imageSize?: string;
+  customDesign?: unknown;
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const { cvData, templateId = 'template1', fontFamily = 'Calibri', fontSize = '11', highlightColor = '#22c55e', imageSize = '24' } = (await req.json()) as PDFRequest;
+    const { cvData, templateId = 'template1', fontFamily = 'Calibri', fontSize = '11', highlightColor = '#22c55e', imageSize = '24', customDesign } = (await req.json()) as PDFRequest;
+    const isCustom = templateId === 'custom';
 
     // Generate HTML manually without using ReactDOMServer
-    const html = templateId === 'template2' 
+    const html = isCustom
+      ? generateCustomHTML(cvData, normalizeDesign(customDesign), { fontFamily, fontSize, highlightColor, imageSize })
+      : templateId === 'template2'
       ? generateTemplate2HTML(cvData, fontFamily, fontSize, imageSize)
       : templateId === 'template3'
       ? generateTemplate3HTML(cvData, fontFamily, fontSize, highlightColor, imageSize)
@@ -44,19 +50,31 @@ export async function POST(req: NextRequest) {
 
     const page = await browser.newPage();
     
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    if (isCustom) {
+      // Web fonts are best effort: if Google Fonts is slow, render with the fallback fonts instead of failing
+      await page.setContent(html, { waitUntil: 'load', timeout: 15000 });
+      await Promise.race([
+        page.evaluate(() => document.fonts.ready.then(() => undefined)),
+        new Promise((resolve) => setTimeout(resolve, 8000)),
+      ]);
+    } else {
+      await page.setContent(html, { waitUntil: 'networkidle0' });
+    }
     
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '15mm',
-        right: '15mm',
-        bottom: '15mm',
-        left: '15mm',
-      },
-      preferCSSPageSize: false,
-    });
+    // The custom template paints edge to edge (colored header/sidebar); its page margins come from @page CSS
+    const pdfBuffer = await page.pdf(isCustom
+      ? { format: 'A4', printBackground: true, preferCSSPageSize: true }
+      : {
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '15mm',
+          right: '15mm',
+          bottom: '15mm',
+          left: '15mm',
+        },
+        preferCSSPageSize: false,
+      });
 
     await browser.close();
 
@@ -610,6 +628,26 @@ function generateTemplate3HTML(data: CVData, fontFamily: string, fontSize: strin
           ` : ''}
         </div>
       </body>
+    </html>
+  `;
+}
+
+function generateCustomHTML(data: CVData, design: CvDesign, options: CustomRenderOptions): string {
+  const fontsHref = googleFontsHref(customCvFonts(design, options));
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        ${fontsHref ? `<link rel="stylesheet" href="${fontsHref}">` : ''}
+        <style>
+          /* No page margins so colored bands/sidebars bleed to the edge; the columns repeat their padding on every page */
+          @page { size: A4; margin: 0; }
+          html { background: ${customCvPageBackground(design, options)}; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          body { margin: 0; }
+        </style>
+      </head>
+      <body>${renderCustomCv(data, design, { ...options, forPdf: true })}</body>
     </html>
   `;
 }

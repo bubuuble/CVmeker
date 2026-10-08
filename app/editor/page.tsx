@@ -10,10 +10,12 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import Template1 from '@/components/templates/template1';
 import Template2 from '@/components/templates/template2';
 import Template3 from '@/components/templates/template3';
+import CustomTemplate from '@/components/templates/custom-template';
 import { modernProfessionalData, classicATSData, joshuaPhuaData } from '@/lib/mock-data';
 import CvForm from '@/components/CvForm';
-
-const STORAGE_KEY = 'cvmaker_data';
+import { Download, FileText, Loader2, Trash2 } from 'lucide-react';
+import { STORAGE_KEY } from '@/lib/cv-storage';
+import { CvDesign, DEFAULT_DESIGN, GOOGLE_FONTS, normalizeDesign } from '@/lib/cv-design';
 
 function EditorContent() {
   const { t } = useLanguage();
@@ -24,6 +26,8 @@ function EditorContent() {
   const [fontSize, setFontSize] = useState('11');
   const [highlightColor, setHighlightColor] = useState('#000000ff'); 
   const [imageSize, setImageSize] = useState('24');
+  // Design of the "custom" template (an imported CV's look); null for the built-in templates
+  const [customDesign, setCustomDesign] = useState<CvDesign | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const cvPreviewRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
@@ -39,6 +43,7 @@ function EditorContent() {
     // Helper function to load template data
     const loadTemplate = (templateName: string) => {
       console.log('Loading fresh template:', templateName);
+      setCustomDesign(null);
       if (templateName === 'template1') {
         setTemplateId('template1');
         setCvData(JSON.parse(JSON.stringify(modernProfessionalData)));
@@ -68,6 +73,7 @@ function EditorContent() {
             setFontSize(parsed.fontSize || '11');
             setHighlightColor(parsed.highlightColor || '#000000ff');
             setImageSize(parsed.imageSize || '24');
+            setCustomDesign(parsed.customDesign ? normalizeDesign(parsed.customDesign) : null);
             setIsLoading(false);
             return;
           }
@@ -93,6 +99,7 @@ function EditorContent() {
             setFontSize(parsed.fontSize || '11');
             setHighlightColor(parsed.highlightColor || '#000000ff');
             setImageSize(parsed.imageSize || '24');
+            setCustomDesign(parsed.customDesign ? normalizeDesign(parsed.customDesign) : null);
           }
         } catch (e) {
           console.error('Failed to parse saved CV data:', e);
@@ -113,10 +120,11 @@ function EditorContent() {
         fontSize,
         highlightColor,
         imageSize,
+        customDesign,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
     }
-  }, [cvData, templateId, fontFamily, fontSize, highlightColor, imageSize]);
+  }, [cvData, templateId, fontFamily, fontSize, highlightColor, imageSize, customDesign]);
 
   // Empty CV data structure
   const getEmptyCVData = (): CVData => ({
@@ -150,6 +158,7 @@ function EditorContent() {
         fontSize,
         highlightColor,
         imageSize,
+        customDesign,
       }));
     }
   };
@@ -169,6 +178,7 @@ function EditorContent() {
           fontSize,
           highlightColor,
           imageSize,
+          customDesign,
         }),
       });
 
@@ -195,51 +205,62 @@ function EditorContent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-secondary">
+    <div className="flex flex-col min-h-screen bg-secondary/60">
       <Navbar />
-      <main className="flex-grow w-full px-4 py-8 sm:px-6 lg:px-8">
+      <main className="flex-grow w-full px-4 py-6 sm:py-8 sm:px-6 lg:px-8">
         {!cvData ? (
           <div className="flex flex-col items-center justify-center h-full pt-16 px-4">
-            <div className="w-full max-w-xl p-6 sm:p-8 border rounded-lg bg-card shadow-lg text-center">
-              <h1 className="text-xl sm:text-2xl font-bold">{t('editor')}</h1>
-              <p className="text-muted-foreground my-4 text-sm sm:text-base">{t('pleaseSelect')}</p>
-              <Link href="/templates" className="w-full inline-block h-11 px-6 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 leading-[44px] text-sm sm:text-base">{t('goToTemplates')}</Link>
+            <div className="w-full max-w-xl p-8 sm:p-10 border rounded-3xl bg-card shadow-xl shadow-slate-900/5 text-center">
+              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <FileText className="h-7 w-7" />
+              </div>
+              <h1 className="text-2xl font-extrabold tracking-tight">{t('editor')}</h1>
+              <p className="text-muted-foreground mt-2 mb-7 text-sm sm:text-base">{t('pleaseSelect')}</p>
+              <Link href="/templates" className="btn-primary w-full">{t('goToTemplates')}</Link>
             </div>
           </div>
         ) : (
           <div>
             {/* Toolbar with customization controls */}
             <div className="max-w-7xl mx-auto mb-6">
-              <div className="flex flex-col gap-3 p-3 sm:p-4 bg-card border rounded-lg">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-lg sm:text-xl font-bold">{t('liveEditor')}</h1>
+              <div className="flex flex-col gap-4 p-4 sm:p-5 bg-card border rounded-2xl shadow-sm">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 whitespace-nowrap">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                    </span>
+                    <h1 className="text-lg sm:text-xl font-extrabold tracking-tight">{t('liveEditor')}</h1>
+                  </div>
                   {/* Buttons - Mobile Top */}
                   <div className="flex gap-2 lg:hidden">
-                    <button 
+                    <button
                       onClick={handleClearData}
-                      className="h-9 px-3 text-xs sm:text-sm bg-destructive text-destructive-foreground rounded font-medium hover:bg-destructive/90 whitespace-nowrap"
+                      className="inline-flex items-center gap-1.5 h-9 px-3 text-xs sm:text-sm border border-red-200 text-red-600 bg-red-50 rounded-lg font-semibold hover:bg-red-100 transition-colors whitespace-nowrap"
                     >
+                      <Trash2 className="h-3.5 w-3.5" />
                       {t('clearData')}
                     </button>
-                    <button 
-                      onClick={handleDownloadPDF} 
+                    <button
+                      onClick={handleDownloadPDF}
                       disabled={isLoadingPDF}
-                      className="h-9 px-3 text-xs sm:text-sm bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 disabled:bg-muted whitespace-nowrap"
+                      className="inline-flex items-center gap-1.5 h-9 px-3 text-xs sm:text-sm bg-primary text-primary-foreground rounded-lg font-semibold shadow-sm shadow-primary/30 hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none transition-colors whitespace-nowrap"
                     >
+                      {isLoadingPDF ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
                       {isLoadingPDF ? t('generating') : t('downloadPDF')}
                     </button>
                   </div>
                 </div>
-                
+
                 {/* Customization Controls */}
-                <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:flex sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
                   {/* Font Family */}
-                  <div className="flex items-center gap-2 flex-1 min-w-[140px]">
-                    <label className="text-xs sm:text-sm font-medium whitespace-nowrap">{t('font')}</label>
-                    <select 
-                      value={fontFamily} 
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 sm:flex-1 sm:min-w-[160px]">
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">{t('font')}</label>
+                    <select
+                      value={fontFamily}
                       onChange={(e) => setFontFamily(e.target.value)}
-                      className="h-8 px-2 text-xs sm:text-sm border rounded bg-background flex-1"
+                      className="h-9 px-2.5 text-sm border rounded-lg bg-background flex-1 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                     >
                       <option value="Calibri">Calibri</option>
                       <option value="Arial">Arial</option>
@@ -247,16 +268,20 @@ function EditorContent() {
                       <option value="Georgia">Georgia</option>
                       <option value="Verdana">Verdana</option>
                       <option value="Montserrat">Montserrat</option>
+                      {/* Web fonts are loaded only by the custom template */}
+                      {templateId === 'custom' && Object.keys(GOOGLE_FONTS).filter((font) => font !== 'Montserrat').map((font) => (
+                        <option key={font} value={font}>{font}</option>
+                      ))}
                     </select>
                   </div>
 
                   {/* Font Size */}
-                  <div className="flex items-center gap-2 flex-1 min-w-[100px]">
-                    <label className="text-xs sm:text-sm font-medium whitespace-nowrap">{t('size')}</label>
-                    <select 
-                      value={fontSize} 
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 sm:flex-1 sm:min-w-[110px]">
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">{t('size')}</label>
+                    <select
+                      value={fontSize}
                       onChange={(e) => setFontSize(e.target.value)}
-                      className="h-8 px-2 text-xs sm:text-sm border rounded bg-background flex-1"
+                      className="h-9 px-2.5 text-sm border rounded-lg bg-background flex-1 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                     >
                       <option value="9">9pt</option>
                       <option value="10">10pt</option>
@@ -273,23 +298,23 @@ function EditorContent() {
                   </div>
 
                   {/* Highlight Color */}
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs sm:text-sm font-medium whitespace-nowrap">{t('highlight')}</label>
-                    <input 
-                      type="color" 
-                      value={highlightColor} 
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">{t('highlight')}</label>
+                    <input
+                      type="color"
+                      value={highlightColor}
                       onChange={(e) => setHighlightColor(e.target.value)}
-                      className="h-8 w-12 sm:w-16 border rounded cursor-pointer"
+                      className="h-9 w-full sm:w-14 border rounded-lg bg-background p-1 cursor-pointer"
                     />
                   </div>
 
                   {/* Image Size */}
-                  <div className="flex items-center gap-2 flex-1 min-w-[140px]">
-                    <label className="text-xs sm:text-sm font-medium whitespace-nowrap">{t('imageSize')}</label>
-                    <select 
-                      value={imageSize} 
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 sm:flex-1 sm:min-w-[150px]">
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">{t('imageSize')}</label>
+                    <select
+                      value={imageSize}
                       onChange={(e) => setImageSize(e.target.value)}
-                      className="h-8 px-2 text-xs sm:text-sm border rounded bg-background flex-1"
+                      className="h-9 px-2.5 text-sm border rounded-lg bg-background flex-1 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary"
                     >
                       <option value="16">Small</option>
                       <option value="20">Medium</option>
@@ -300,17 +325,19 @@ function EditorContent() {
 
                   {/* Buttons - Desktop */}
                   <div className="hidden lg:flex gap-2 ml-auto">
-                    <button 
+                    <button
                       onClick={handleClearData}
-                      className="h-8 px-4 text-sm bg-destructive text-destructive-foreground rounded font-medium hover:bg-destructive/90 whitespace-nowrap"
+                      className="inline-flex items-center gap-1.5 h-9 px-4 text-sm border border-red-200 text-red-600 bg-red-50 rounded-lg font-semibold hover:bg-red-100 transition-colors whitespace-nowrap"
                     >
+                      <Trash2 className="h-4 w-4" />
                       {t('clearData')}
                     </button>
-                    <button 
-                      onClick={handleDownloadPDF} 
+                    <button
+                      onClick={handleDownloadPDF}
                       disabled={isLoadingPDF}
-                      className="h-8 px-4 text-sm bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 disabled:bg-muted whitespace-nowrap"
+                      className="inline-flex items-center gap-1.5 h-9 px-4 text-sm bg-primary text-primary-foreground rounded-lg font-semibold shadow-sm shadow-primary/30 hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none transition-colors whitespace-nowrap"
                     >
+                      {isLoadingPDF ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                       {isLoadingPDF ? t('generating') : t('downloadPDF')}
                     </button>
                   </div>
@@ -318,15 +345,15 @@ function EditorContent() {
               </div>
             </div>
 
-            <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-              <div className="order-1 lg:order-1"><CvForm data={cvData} setData={setCvData} /></div>
+            <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-7xl mx-auto">
+              <div className="order-1 lg:order-1 rounded-2xl border bg-card shadow-sm overflow-hidden self-start w-full"><CvForm data={cvData} setData={setCvData} /></div>
               <div className="order-2 lg:order-2">
                 {/* Mobile View - Full width with better visibility */}
-                <div className="lg:hidden w-full overflow-x-auto bg-gray-100 p-4 rounded-lg">
+                <div className="lg:hidden w-full overflow-x-auto bg-slate-200/70 p-3 sm:p-4 rounded-2xl border">
                   <div 
                     className="w-full bg-white shadow-lg mx-auto"
-                    style={{ 
-                      minHeight: '100vh',
+                    style={{
+                      minHeight: templateId === 'custom' ? undefined : '100vh',
                       fontSize: '8px' // Smaller font for mobile readability
                     }}
                   >
@@ -349,12 +376,23 @@ function EditorContent() {
                       />
                     )}
                     {templateId === 'template3' && (
-                      <Template3 
-                        data={cvData} 
+                      <Template3
+                        data={cvData}
                         fontFamily={fontFamily}
                         fontSize="8"
                         highlightColor={highlightColor}
                         imageSize="12"
+                      />
+                    )}
+                    {templateId === 'custom' && (
+                      // Scales itself to fit, so it keeps the real font size instead of the shrunken mobile one
+                      <CustomTemplate
+                        data={cvData}
+                        design={customDesign ?? DEFAULT_DESIGN}
+                        fontFamily={fontFamily}
+                        fontSize={fontSize}
+                        highlightColor={highlightColor}
+                        imageSize={imageSize}
                       />
                     )}
                   </div>
@@ -364,7 +402,7 @@ function EditorContent() {
                 <div className="hidden lg:block">
                   <div 
                     ref={cvPreviewRef}
-                    className="w-full max-w-[210mm] min-h-[297mm] bg-white shadow-lg mx-auto transform origin-top scale-[0.8]"
+                    className={`w-full max-w-[210mm] ${templateId === 'custom' ? '' : 'min-h-[297mm]'} bg-white shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 mx-auto transform origin-top scale-[0.8]`}
                   >
                     {templateId === 'template1' && (
                       <Template1 
@@ -385,8 +423,18 @@ function EditorContent() {
                       />
                     )}
                     {templateId === 'template3' && (
-                      <Template3 
-                        data={cvData} 
+                      <Template3
+                        data={cvData}
+                        fontFamily={fontFamily}
+                        fontSize={fontSize}
+                        highlightColor={highlightColor}
+                        imageSize={imageSize}
+                      />
+                    )}
+                    {templateId === 'custom' && (
+                      <CustomTemplate
+                        data={cvData}
+                        design={customDesign ?? DEFAULT_DESIGN}
                         fontFamily={fontFamily}
                         fontSize={fontSize}
                         highlightColor={highlightColor}
@@ -406,7 +454,7 @@ function EditorContent() {
 
 const EditorPage: React.FC = () => {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="text-lg">Loading...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
       <EditorContent />
     </Suspense>
   );

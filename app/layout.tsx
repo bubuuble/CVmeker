@@ -1,10 +1,10 @@
 import type React from "react"
 import "@/app/globals.css"
-import { Inter } from "next/font/google"
+import { Plus_Jakarta_Sans } from "next/font/google"
 import { LanguageProvider } from "@/contexts/LanguageContext"
 import { Analytics } from "@vercel/analytics/next"
 
-const inter = Inter({ subsets: ["latin"], display: 'swap' })
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], display: 'swap' })
 
 export const metadata = {
   title: "CV Maker - Create Your Professional Resumes",
@@ -26,10 +26,9 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <head>
         <Analytics />
-        {/* Add this line for Google Material Symbols */}
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
       </head>
-      <body className={inter.className}>
+      {/* Browser extensions (e.g. ColorZilla's cz-shortcut-listen) add attributes to <body> before hydration */}
+      <body className={jakarta.className} suppressHydrationWarning>
         <LanguageProvider>
           {children}
         </LanguageProvider>
